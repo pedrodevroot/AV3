@@ -1,0 +1,85 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+@CODIGO = AV-001
+@ETAPA_ID = <cole_id_da_etapa>
+@FUNC_ID = <cole_id_do_funcionario>
+
+### Listar etapas da aeronave
+GET {{BASE}}/aeronaves/{{CODIGO}}/etapas
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Buscar etapa por ID
+GET {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Criar etapa de produção
+POST {{BASE}}/aeronaves/{{CODIGO}}/etapas
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Montagem da fuselagem",
+  "prazo": "2026-09-01T00:00:00.000Z"
+}
+
+###
+
+### Criar etapa de instalação elétrica
+POST {{BASE}}/aeronaves/{{CODIGO}}/etapas
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Instalação do sistema elétrico",
+  "prazo": "2026-10-15T00:00:00.000Z"
+}
+
+###
+
+### Iniciar etapa (PENDENTE → ANDAMENTO)
+PATCH {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}/iniciar
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Finalizar etapa (ANDAMENTO → CONCLUIDA)
+PATCH {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}/finalizar
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Associar funcionário à etapa (requer ADMINISTRADOR)
+POST {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}/funcionarios
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "funcionarioId": "{{FUNC_ID}}"
+}
+
+###
+
+### Desassociar funcionário da etapa (requer ADMINISTRADOR)
+DELETE {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}/funcionarios/{{FUNC_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Atualizar etapa
+PUT {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "prazo": "2026-11-01T00:00:00.000Z"
+}
+
+###
+
+### Remover etapa
+DELETE {{BASE}}/aeronaves/{{CODIGO}}/etapas/{{ETAPA_ID}}
+Authorization: Bearer {{TOKEN}}

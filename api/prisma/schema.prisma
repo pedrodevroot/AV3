@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+//  Enums — Funcionário
+// ─────────────────────────────────────────────
+
+enum NivelPermissao {
+  ADMINISTRADOR
+  ENGENHEIRO
+  OPERADOR
+}
+
+// ─────────────────────────────────────────────
+//  Enums — Aeronave
+// ─────────────────────────────────────────────
+
+enum TipoAeronave {
+  COMERCIAL
+  MILITAR
+}
+
+// ─────────────────────────────────────────────
+//  Enums — Peça
+// ─────────────────────────────────────────────
+
+enum TipoPeca {
+  NACIONAL
+  IMPORTADA
+}
+
+enum StatusPeca {
+  EM_PRODUCAO
+  EM_TRANSPORTE
+  PRONTA
+}
+
+// ─────────────────────────────────────────────
+//  Enums — Etapa de Produção
+// ─────────────────────────────────────────────
+
+enum StatusEtapa {
+  PENDENTE
+  ANDAMENTO
+  CONCLUIDA
+}
+
+// ─────────────────────────────────────────────
+//  Enums — Teste
+// ─────────────────────────────────────────────
+
+enum TipoTeste {
+  ELETRICO
+  HIDRAULICO
+  AERODINAMICO
+}
+
+enum ResultadoTeste {
+  APROVADO
+  REPROVADO
+}
+
+// ─────────────────────────────────────────────
+//  Enums — Ordem de Fabricação
+// ─────────────────────────────────────────────
+
+enum StatusOrdem {
+  ABERTA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum PrioridadeOrdem {
+  BAIXA
+  MEDIA
+  ALTA
+  CRITICA
+}
+
+// ─────────────────────────────────────────────
+//  Funcionário (Usuário do sistema)
+// ─────────────────────────────────────────────
+
+model Funcionario {
+  id             String             @id @default(cuid())
+  nome           String
+  telefone       String             @db.VarChar(20)
+  endereco       String
+  usuario        String             @unique @db.VarChar(60)
+  senhaHash      String             @map("senha_hash") @db.VarChar(255)
+  nivelPermissao NivelPermissao     @map("nivel_permissao")
+  criadoEm       DateTime           @default(now()) @map("criado_em")
+  atualizadoEm   DateTime           @updatedAt @map("atualizado_em")
+
+  etapas              EtapaFuncionario[]
+  ordensResponsavel   OrdemFabricacao[]
+
+  @@index([nivelPermissao])
+  @@map("funcionarios")
+}
+
+// ─────────────────────────────────────────────
+//  Aeronave
+// ─────────────────────────────────────────────
+
+model Aeronave {
+  id           String       @id @default(cuid())
+  codigo       String       @unique @db.VarChar(30)
+  modelo       String       @db.VarChar(120)
+  tipo         TipoAeronave
+  capacidade   Int          @db.UnsignedInt
+  alcance      Float
+  criadoEm     DateTime     @default(now()) @map("criado_em")
+  atualizadoEm DateTime     @updatedAt @map("atualizado_em")
+
+  pecas      Peca[]
+  etapas     Etapa[]
+  testes     Teste[]
+  relatorios Relatorio[]
+  ordens     OrdemFabricacao[]
+
+  @@index([tipo])
+  @@map("aeronaves")
+}
+
+// ─────────────────────────────────────────────
+//  Peça
+// ─────────────────────────────────────────────
+
+model Peca {
+  id           String     @id @default(cuid())
+  aeronaveId   String     @map("aeronave_id")
+  nome         String     @db.VarChar(120)
+  tipo         TipoPeca
+  fornecedor   String     @db.VarChar(120)
+  status       StatusPeca
+  criadoEm     DateTime   @default(now()) @map("criado_em")
+  atualizadoEm DateTime   @updatedAt @map("atualizado_em")
+
+  aeronave        Aeronave    @relation(fields: [aeronaveId], references: [id], onDelete: Cascade)
+  ordensVinculadas OrdemPeca[]
+
+  @@index([aeronaveId])
+  @@index([status])
+  @@map("pecas")
+}
+
+// ─────────────────────────────────────────────
+//  Etapa de Produção
+// ─────────────────────────────────────────────
+
+model Etapa {
+  id           String      @id @default(cuid())
+  aeronaveId   String      @map("aeronave_id")
+  nome         String      @db.VarChar(120)
+  prazo        DateTime
+  status       StatusEtapa @default(PENDENTE)
+  criadoEm     DateTime    @default(now()) @map("criado_em")
+  atualizadoEm DateTime    @updatedAt @map("atualizado_em")
+
+  aeronave     Aeronave           @relation(fields: [aeronaveId], references: [id], onDelete: Cascade)
+  funcionarios EtapaFuncionario[]
+
+  @@index([aeronaveId])
+  @@index([status])
+  @@map("etapas")
+}
+
+// ─────────────────────────────────────────────
+//  Etapa ↔ Funcionário (N:N)
+// ─────────────────────────────────────────────
+
+model EtapaFuncionario {
+  etapaId       String      @map("etapa_id")
+  funcionarioId String      @map("funcionario_id")
+
+  etapa       Etapa       @relation(fields: [etapaId], references: [id], onDelete: Cascade)
+  funcionario Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+
+  @@id([etapaId, funcionarioId])
+  @@map("etapa_funcionarios")
+}
+
+// ─────────────────────────────────────────────
+//  Teste
+// ─────────────────────────────────────────────
+
+model Teste {
+  id         String         @id @default(cuid())
+  aeronaveId String         @map("aeronave_id")
+  tipo       TipoTeste
+  resultado  ResultadoTeste
+  criadoEm   DateTime       @default(now()) @map("criado_em")
+
+  aeronave Aeronave @relation(fields: [aeronaveId], references: [id], onDelete: Cascade)
+
+  @@index([aeronaveId])
+  @@index([resultado])
+  @@map("testes")
+}
+
+// ─────────────────────────────────────────────
+//  Relatório Final de Entrega
+// ─────────────────────────────────────────────
+
+model Relatorio {
+  id          String   @id @default(cuid())
+  aeronaveId  String   @map("aeronave_id")
+  cliente     String   @db.VarChar(200)
+  dataEntrega DateTime @map("data_entrega")
+  conteudo    String   @db.Text
+  criadoEm    DateTime @default(now()) @map("criado_em")
+
+  aeronave Aeronave @relation(fields: [aeronaveId], references: [id], onDelete: Cascade)
+
+  @@index([aeronaveId])
+  @@map("relatorios")
+}
+
+// ─────────────────────────────────────────────
+//  Ordem de Fabricação
+// ─────────────────────────────────────────────
+
+model OrdemFabricacao {
+  id             String          @id @default(cuid())
+  codigo         String          @unique @db.VarChar(30)
+  descricao      String          @db.Text
+  status         StatusOrdem     @default(ABERTA)
+  prioridade     PrioridadeOrdem @default(MEDIA)
+  dataAbertura   DateTime        @default(now()) @map("data_abertura")
+  dataFechamento DateTime?       @map("data_fechamento")
+  aeronaveId     String          @map("aeronave_id")
+  responsavelId  String          @map("responsavel_id")
+  criadoEm       DateTime        @default(now()) @map("criado_em")
+  atualizadoEm   DateTime        @updatedAt @map("atualizado_em")
+
+  aeronave    Aeronave    @relation(fields: [aeronaveId], references: [id], onDelete: Cascade)
+  responsavel Funcionario @relation(fields: [responsavelId], references: [id])
+  itens       OrdemPeca[]
+
+  @@index([aeronaveId])
+  @@index([responsavelId])
+  @@index([status])
+  @@index([prioridade])
+  @@map("ordens_fabricacao")
+}
+
+// ─────────────────────────────────────────────
+//  OrdemFabricacao ↔ Peça (N:N com quantidade)
+// ─────────────────────────────────────────────
+
+model OrdemPeca {
+  id         String @id @default(cuid())
+  ordemId    String @map("ordem_id")
+  pecaId     String @map("peca_id")
+  quantidade Int    @default(1) @db.UnsignedInt
+
+  ordem OrdemFabricacao @relation(fields: [ordemId], references: [id], onDelete: Cascade)
+  peca  Peca            @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+
+  @@unique([ordemId, pecaId])
+  @@index([pecaId])
+  @@map("ordem_pecas")
+}

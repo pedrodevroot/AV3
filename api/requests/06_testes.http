@@ -1,0 +1,50 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+@CODIGO = AV-001
+@TESTE_ID = <cole_id_do_teste>
+
+### Listar testes da aeronave
+GET {{BASE}}/aeronaves/{{CODIGO}}/testes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Registrar teste elétrico aprovado
+POST {{BASE}}/aeronaves/{{CODIGO}}/testes
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "tipo": "ELETRICO",
+  "resultado": "APROVADO"
+}
+
+###
+
+### Registrar teste hidráulico
+POST {{BASE}}/aeronaves/{{CODIGO}}/testes
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "tipo": "HIDRAULICO",
+  "resultado": "APROVADO"
+}
+
+###
+
+### Registrar teste aerodinâmico reprovado
+POST {{BASE}}/aeronaves/{{CODIGO}}/testes
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "tipo": "AERODINAMICO",
+  "resultado": "REPROVADO"
+}
+
+###
+
+### Remover teste
+DELETE {{BASE}}/aeronaves/{{CODIGO}}/testes/{{TESTE_ID}}
+Authorization: Bearer {{TOKEN}}

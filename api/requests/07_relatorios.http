@@ -1,0 +1,26 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+@CODIGO = AV-001
+@RELATORIO_ID = <cole_id_do_relatorio>
+
+### Listar relatórios da aeronave
+GET {{BASE}}/aeronaves/{{CODIGO}}/relatorios
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Buscar relatório completo (inclui conteúdo textual)
+GET {{BASE}}/aeronaves/{{CODIGO}}/relatorios/{{RELATORIO_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Gerar relatório final (requer todas etapas CONCLUIDA)
+POST {{BASE}}/aeronaves/{{CODIGO}}/relatorios
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "cliente": "LATAM Airlines Brasil",
+  "dataEntrega": "2026-12-15T00:00:00.000Z"
+}

@@ -1,0 +1,59 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+@CODIGO = AV-001
+@PECA_ID = <cole_id_da_peca>
+
+### Listar peças da aeronave
+GET {{BASE}}/aeronaves/{{CODIGO}}/pecas
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Buscar peça por ID
+GET {{BASE}}/aeronaves/{{CODIGO}}/pecas/{{PECA_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Adicionar peça importada
+POST {{BASE}}/aeronaves/{{CODIGO}}/pecas
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Motor Rolls-Royce AE 3007A",
+  "tipo": "IMPORTADA",
+  "fornecedor": "Rolls-Royce Holdings",
+  "status": "EM_PRODUCAO"
+}
+
+###
+
+### Adicionar peça nacional
+POST {{BASE}}/aeronaves/{{CODIGO}}/pecas
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Trem de Pouso Principal",
+  "tipo": "NACIONAL",
+  "fornecedor": "Moog Brasil",
+  "status": "EM_TRANSPORTE"
+}
+
+###
+
+### Atualizar status e dados da peça
+PUT {{BASE}}/aeronaves/{{CODIGO}}/pecas/{{PECA_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "status": "PRONTA"
+}
+
+###
+
+### Remover peça
+DELETE {{BASE}}/aeronaves/{{CODIGO}}/pecas/{{PECA_ID}}
+Authorization: Bearer {{TOKEN}}

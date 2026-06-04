@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: aerocode_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: aerocode
+      MYSQL_USER: aerocode_user
+      MYSQL_PASSWORD: aerocode123
+    ports:
+      - '3306:3306'
+    volumes:
+      - aerocode_mysql_data:/var/lib/mysql
+      - ./prisma/sql/create_database.sql:/docker-entrypoint-initdb.d/00_create.sql:ro
+    command: >
+      --default-authentication-plugin=caching_sha2_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-uroot', '-proot123']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  aerocode_mysql_data:
+    driver: local

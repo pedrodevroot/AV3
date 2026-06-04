@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Backend - dados gerados em runtime
+backend/data/dados_*.json
+backend/data/relatorio_*.txt
+
+# Vite / frontend
+frontend/dist/
+.vite/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

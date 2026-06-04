@@ -1,0 +1,61 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+
+### Listar todos os funcionários
+GET {{BASE}}/funcionarios
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Buscar funcionário por ID
+GET {{BASE}}/funcionarios/COLE_ID_AQUI
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Cadastrar Engenheiro
+POST {{BASE}}/funcionarios
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Ana Lima",
+  "telefone": "(11) 98888-1111",
+  "endereco": "Av. Industrial, 200 — São Paulo/SP",
+  "usuario": "ana.lima",
+  "senha": "senha123",
+  "nivelPermissao": "ENGENHEIRO"
+}
+
+###
+
+### Cadastrar Operador
+POST {{BASE}}/funcionarios
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Carlos Mendes",
+  "telefone": "(11) 97777-2222",
+  "endereco": "Rua das Oficinas, 50 — São Paulo/SP",
+  "usuario": "carlos.mendes",
+  "senha": "senha123",
+  "nivelPermissao": "OPERADOR"
+}
+
+###
+
+### Atualizar funcionário
+PUT {{BASE}}/funcionarios/COLE_ID_AQUI
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "telefone": "(11) 90000-9999"
+}
+
+###
+
+### Remover funcionário
+DELETE {{BASE}}/funcionarios/COLE_ID_AQUI
+Authorization: Bearer {{TOKEN}}

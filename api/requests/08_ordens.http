@@ -1,0 +1,116 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+@ORDEM_ID = <cole_id_da_ordem>
+@PECA_ID = <cole_id_da_peca>
+
+### Listar todas as ordens
+GET {{BASE}}/ordens
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Filtrar por status e prioridade
+GET {{BASE}}/ordens?status=ABERTA&prioridade=ALTA
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Buscar ordem por ID
+GET {{BASE}}/ordens/{{ORDEM_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Criar ordem de fabricação de alta prioridade
+POST {{BASE}}/ordens
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "codigo": "OF-2026-001",
+  "descricao": "Fabricação completa do Embraer E175 para LATAM Airlines",
+  "prioridade": "ALTA",
+  "aeronaveId": "AV-001"
+}
+
+###
+
+### Criar ordem de prioridade crítica
+POST {{BASE}}/ordens
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "codigo": "OF-2026-002",
+  "descricao": "Entrega urgente — contrato FAB",
+  "prioridade": "CRITICA",
+  "aeronaveId": "AV-002"
+}
+
+###
+
+### Avançar status: ABERTA → EM_ANDAMENTO
+PUT {{BASE}}/ordens/{{ORDEM_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "status": "EM_ANDAMENTO"
+}
+
+###
+
+### Avançar status: EM_ANDAMENTO → CONCLUIDA
+PUT {{BASE}}/ordens/{{ORDEM_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "status": "CONCLUIDA"
+}
+
+###
+
+### Cancelar ordem
+PUT {{BASE}}/ordens/{{ORDEM_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "status": "CANCELADA"
+}
+
+###
+
+### Adicionar peça à ordem
+POST {{BASE}}/ordens/{{ORDEM_ID}}/pecas
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "pecaId": "{{PECA_ID}}",
+  "quantidade": 2
+}
+
+###
+
+### Atualizar quantidade da peça na ordem
+PATCH {{BASE}}/ordens/{{ORDEM_ID}}/pecas/{{PECA_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "quantidade": 4
+}
+
+###
+
+### Remover peça da ordem
+DELETE {{BASE}}/ordens/{{ORDEM_ID}}/pecas/{{PECA_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Remover ordem (requer ADMINISTRADOR, somente se não estiver EM_ANDAMENTO)
+DELETE {{BASE}}/ordens/{{ORDEM_ID}}
+Authorization: Bearer {{TOKEN}}

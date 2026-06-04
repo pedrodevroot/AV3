@@ -1,0 +1,18 @@
+@BASE = http://localhost:3333/api/v1
+
+### Login (admin padrão)
+# @name login
+POST {{BASE}}/auth/login
+Content-Type: application/json
+
+{
+  "usuario": "admin",
+  "senha": "admin123"
+}
+
+### Salva token automaticamente no REST Client
+@TOKEN = {{login.response.body.token}}
+
+### Dados do usuário autenticado
+GET {{BASE}}/auth/me
+Authorization: Bearer {{TOKEN}}

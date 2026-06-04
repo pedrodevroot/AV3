@@ -1,0 +1,15 @@
+import { NivelPermissao } from '@prisma/client';
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        usuario: string;
+        nivelPermissao: NivelPermissao;
+      };
+    }
+  }
+}
+
+export {};

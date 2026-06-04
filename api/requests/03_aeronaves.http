@@ -1,0 +1,62 @@
+@BASE = http://localhost:3333/api/v1
+@TOKEN = <cole_o_token_aqui>
+@CODIGO = AV-001
+
+### Listar aeronaves
+GET {{BASE}}/aeronaves
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Buscar aeronave por código
+GET {{BASE}}/aeronaves/{{CODIGO}}
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### Cadastrar aeronave comercial
+# @name novaAeronave
+POST {{BASE}}/aeronaves
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "codigo": "AV-001",
+  "modelo": "Embraer E175",
+  "tipo": "COMERCIAL",
+  "capacidade": 80,
+  "alcance": 3700
+}
+
+###
+
+### Cadastrar aeronave militar
+POST {{BASE}}/aeronaves
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "codigo": "AV-002",
+  "modelo": "Embraer A-29 Super Tucano",
+  "tipo": "MILITAR",
+  "capacidade": 2,
+  "alcance": 1330
+}
+
+###
+
+### Atualizar aeronave
+PUT {{BASE}}/aeronaves/{{CODIGO}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "capacidade": 88,
+  "alcance": 3900
+}
+
+###
+
+### Remover aeronave
+DELETE {{BASE}}/aeronaves/{{CODIGO}}
+Authorization: Bearer {{TOKEN}}
