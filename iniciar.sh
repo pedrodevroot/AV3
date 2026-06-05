@@ -26,12 +26,9 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-echo " [1/7] Verificando dependências da API..."
+echo " [1/7] Instalando dependências da API..."
 cd "$PASTA/api"
-if [ ! -d "node_modules" ]; then
-    echo "        Instalando pacotes... aguarde."
-    npm install --silent
-fi
+npm install --silent 2>/dev/null
 echo "        OK"
 
 echo " [2/7] Configurando variáveis de ambiente..."
@@ -57,23 +54,20 @@ done
 echo -e "        ${VERDE}MySQL pronto!${RESET}"
 
 echo " [5/7] Criando tabelas no banco de dados..."
-if ! node_modules/.bin/prisma db push --skip-generate --accept-data-loss 2>&1; then
-    echo -e " ${VERMELHO}[ERRO] Falha ao criar tabelas. Verifique o DATABASE_URL no arquivo .env${RESET}"
+if ! npm run prisma:push 2>&1; then
+    echo -e " ${VERMELHO}[ERRO] Falha ao criar tabelas.${RESET}"
     exit 1
 fi
-node_modules/.bin/prisma generate > /dev/null 2>&1
+npm run prisma:generate > /dev/null 2>&1
 echo "        Tabelas criadas."
 
 echo " [6/7] Criando usuário administrador..."
-node_modules/.bin/tsx prisma/seed.ts 2>/dev/null || true
+npm run prisma:seed 2>/dev/null || true
 echo "        Pronto. Login: admin / admin123"
 
-echo " [7/7] Verificando dependências do Frontend..."
+echo " [7/7] Instalando dependências do Frontend..."
 cd "$PASTA/frontend"
-if [ ! -d "node_modules" ]; then
-    echo "        Instalando pacotes... aguarde."
-    npm install --silent
-fi
+npm install --silent 2>/dev/null
 echo "        OK"
 
 echo ""
@@ -81,16 +75,16 @@ echo " Iniciando API e Frontend..."
 echo ""
 
 cd "$PASTA/api"
-node_modules/.bin/tsx watch src/server.ts > /tmp/aerocode-api.log 2>&1 &
+npm run dev > /tmp/aerocode-api.log 2>&1 &
 PID_API=$!
 
-sleep 3
+sleep 4
 
 cd "$PASTA/frontend"
-node_modules/.bin/vite > /tmp/aerocode-frontend.log 2>&1 &
+npm run dev > /tmp/aerocode-frontend.log 2>&1 &
 PID_FRONTEND=$!
 
-sleep 4
+sleep 5
 
 xdg-open http://localhost:5173 > /dev/null 2>&1 || \
 sensible-browser http://localhost:5173 > /dev/null 2>&1 || true
