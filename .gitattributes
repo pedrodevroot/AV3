@@ -1,0 +1,8 @@
+# Scripts shell sempre com quebra de linha LF (Linux), mesmo editados no Windows
+*.sh text eol=lf
+
+# Scripts batch sempre com CRLF (Windows)
+*.bat text eol=crlf
+
+# Demais arquivos: normaliza para LF no repositório
+* text=auto eol=lf
