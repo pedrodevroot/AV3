@@ -24,12 +24,70 @@ O projeto é composto por três partes que trabalham juntas:
 
 **Linux** — execute nesta pasta:
 ```bash
-bash iniciar.sh
+sudo bash iniciar.sh
 ```
 
 Os scripts fazem tudo automaticamente e abrem o sistema no navegador.
 
 **Login:** `admin` / `admin123`
+
+---
+
+### Forma manual (passo a passo)
+
+Caso prefira não usar os scripts `iniciar.bat` / `iniciar.sh`, siga os passos abaixo. Os comandos funcionam tanto no Windows (PowerShell) quanto no Linux.
+
+**1. Suba o banco de dados MySQL (via Docker)**
+
+```bash
+cd api
+docker compose up -d
+```
+
+**2. Configure as variáveis de ambiente da API**
+
+Crie o arquivo `.env` a partir do exemplo:
+
+```bash
+# Windows (PowerShell)
+copy .env.example .env
+
+# Linux
+cp .env.example .env
+```
+
+**3. Instale as dependências e prepare o banco (ainda na pasta `api/`)**
+
+```bash
+npm install
+npm run prisma:generate   # gera o Prisma Client
+npm run prisma:push       # cria as tabelas no banco
+npm run prisma:seed       # cria o usuário admin / admin123
+```
+
+**4. Inicie a API**
+
+```bash
+npm run dev
+```
+
+> A API ficará disponível em http://localhost:3333. Deixe este terminal aberto.
+
+**5. Em outro terminal, instale as dependências e inicie o Frontend**
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+> O Frontend ficará disponível em http://localhost:5173.
+
+**6. Acesse o sistema**
+
+Abra http://localhost:5173 no navegador e faça login com `admin` / `admin123`.
+
+**Para parar:** pressione `Ctrl+C` em cada terminal (API e Frontend) e, na pasta `api/`, execute `docker compose down` para parar o banco de dados.
 
 ---
 
