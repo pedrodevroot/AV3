@@ -28,6 +28,10 @@ fi
 
 echo " [1/7] Instalando dependências da API..."
 cd "$PASTA/api"
+if [ -f "node_modules/.bin/prisma" ] && ! head -1 "node_modules/.bin/prisma" 2>/dev/null | grep -q "^#!"; then
+    echo "        Binários Windows detectados — reinstalando para Linux..."
+    rm -rf node_modules
+fi
 npm install --silent 2>/dev/null
 echo "        OK"
 
