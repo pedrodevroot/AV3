@@ -18,6 +18,8 @@ O projeto é composto por três partes que trabalham juntas:
 
 ## Como Rodar
 
+> ⚠️ **Importante:** antes de rodar o projeto (de qualquer forma), o **Docker precisa estar aberto e rodando**. No Windows, abra o **Docker Desktop** e aguarde ele ficar com o status verde. No Linux, certifique-se de que o serviço do Docker está ativo (`sudo systemctl start docker`). Sem o Docker rodando, o banco de dados MySQL não inicia e o projeto não funciona.
+
 ### Forma rápida
 
 **Windows** — dê duplo clique em `iniciar.bat` nesta pasta.
@@ -38,6 +40,8 @@ Os scripts fazem tudo automaticamente e abrem o sistema no navegador.
 Caso prefira não usar os scripts `iniciar.bat` / `iniciar.sh`, siga os passos abaixo. Os comandos funcionam tanto no Windows (PowerShell) quanto no Linux.
 
 **1. Suba o banco de dados MySQL (via Docker)**
+
+> Confira se o Docker Desktop (Windows) ou o serviço do Docker (Linux) já está rodando antes deste passo.
 
 ```bash
 cd api
