@@ -57,15 +57,15 @@ done
 echo -e "        ${VERDE}MySQL pronto!${RESET}"
 
 echo " [5/7] Criando tabelas no banco de dados..."
-if ! npx prisma db push --skip-generate --accept-data-loss 2>&1; then
+if ! node_modules/.bin/prisma db push --skip-generate --accept-data-loss 2>&1; then
     echo -e " ${VERMELHO}[ERRO] Falha ao criar tabelas. Verifique o DATABASE_URL no arquivo .env${RESET}"
     exit 1
 fi
-npx prisma generate > /dev/null 2>&1
+node_modules/.bin/prisma generate > /dev/null 2>&1
 echo "        Tabelas criadas."
 
 echo " [6/7] Criando usuário administrador..."
-npm run prisma:seed 2>/dev/null || true
+node_modules/.bin/tsx prisma/seed.ts 2>/dev/null || true
 echo "        Pronto. Login: admin / admin123"
 
 echo " [7/7] Verificando dependências do Frontend..."
@@ -81,13 +81,13 @@ echo " Iniciando API e Frontend..."
 echo ""
 
 cd "$PASTA/api"
-npm run dev > /tmp/aerocode-api.log 2>&1 &
+node_modules/.bin/tsx watch src/server.ts > /tmp/aerocode-api.log 2>&1 &
 PID_API=$!
 
 sleep 3
 
 cd "$PASTA/frontend"
-npm run dev > /tmp/aerocode-frontend.log 2>&1 &
+node_modules/.bin/vite > /tmp/aerocode-frontend.log 2>&1 &
 PID_FRONTEND=$!
 
 sleep 4
