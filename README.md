@@ -104,6 +104,40 @@ Abra http://localhost:5173 no navegador e faça login com `admin` / `admin123`.
 
 ---
 
+### Problemas comuns (Linux)
+
+**O `iniciar.sh` trava na etapa do MySQL ("Aguardando MySQL ficar pronto")**
+
+Quase sempre é o container do MySQL que não conseguiu subir. Para ver o motivo real, rode na pasta `api/`:
+
+```bash
+cd api
+docker compose up -d        # mostra o erro de verdade
+docker compose logs mysql   # mostra os logs do banco
+```
+
+As causas mais comuns são:
+
+- **Porta 3306 já em uso** — se você tem um MySQL ou MariaDB instalado nativamente no Linux, ele ocupa a porta 3306 e o container não sobe. Verifique e pare o serviço:
+  ```bash
+  sudo ss -tlnp | grep 3306
+  sudo systemctl stop mysql      # ou: sudo systemctl stop mariadb
+  ```
+
+- **Docker e `sudo`** — se o seu usuário está no grupo `docker` (consegue rodar `docker compose up -d` sem `sudo`), rode o script **sem** `sudo` também, para usar o mesmo contexto do Docker:
+  ```bash
+  bash iniciar.sh
+  ```
+  Misturar `sudo bash iniciar.sh` com um `docker compose` rodado sem `sudo` faz cada um falar com um contexto diferente do Docker — por isso o script pode travar esperando um container que ele mesmo não enxerga.
+
+- **Volume antigo com outra senha** — se o banco já foi criado antes com credenciais diferentes, o volume persistido pode travar a inicialização. Para recriar do zero (isso **apaga** os dados do banco):
+  ```bash
+  cd api
+  docker compose down -v && docker compose up -d
+  ```
+
+---
+
 ## Estrutura do Projeto
 
 ```

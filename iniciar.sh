@@ -80,12 +80,36 @@ set +o allexport
 
 # ─── [3/7] MySQL ─────────────────────────────────────────────────────────────
 echo " [3/7] Iniciando banco de dados MySQL..."
-$COMPOSE up -d > /dev/null 2>&1
+if ! $COMPOSE up -d; then
+    echo ""
+    echo -e " ${VERMELHO}[ERRO] Falha ao iniciar o container do MySQL.${RESET}"
+    echo " Causas mais comuns:"
+    echo "   - A porta 3306 ja esta em uso (outro MySQL/MariaDB instalado no Linux)."
+    echo "     Verifique com:  sudo ss -tlnp | grep 3306"
+    echo "     Se houver, pare o servico:  sudo systemctl stop mysql   (ou mariadb)"
+    echo "   - Permissao do Docker. Se seu usuario esta no grupo 'docker',"
+    echo "     rode SEM sudo:  bash iniciar.sh"
+    echo "   - Veja o erro completo rodando, na pasta api/:  docker compose up -d"
+    exit 1
+fi
 echo "        Container iniciado."
 
-# ─── [4/7] Aguarda MySQL ─────────────────────────────────────────────────────
+# ─── [4/7] Aguarda MySQL (com timeout) ───────────────────────────────────────
 echo " [4/7] Aguardando MySQL ficar pronto..."
+TENTATIVAS=0
+MAX_TENTATIVAS=40   # 40 x 3s = 120s
 until $COMPOSE exec -T mysql mysqladmin ping -h localhost -uroot -proot123 --silent > /dev/null 2>&1; do
+    TENTATIVAS=$((TENTATIVAS + 1))
+    if [ "$TENTATIVAS" -ge "$MAX_TENTATIVAS" ]; then
+        echo ""
+        echo -e " ${VERMELHO}[ERRO] O MySQL nao ficou pronto a tempo (120s).${RESET}"
+        echo " Veja os logs do banco para entender o motivo:"
+        echo "   cd api && $COMPOSE logs mysql"
+        echo " Dica: se o banco foi criado antes com outra senha, o volume antigo"
+        echo " pode estar travando. Para recriar do zero (APAGA os dados):"
+        echo "   cd api && $COMPOSE down -v && $COMPOSE up -d"
+        exit 1
+    fi
     sleep 3
 done
 echo -e "        ${VERDE}MySQL pronto!${RESET}"
